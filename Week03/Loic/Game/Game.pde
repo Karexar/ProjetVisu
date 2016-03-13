@@ -29,12 +29,12 @@ void draw() {
   rotateX(rx);
   rotateZ(rz);
   
-  box(600, 40, 600);
+  box(600, 30, 600);
 }
 
 void mouseDragged() {
   //PI/180 est l'incrémentation de base. Valeur choisie aléatoirement
-  float inc = speedRot*(PI/180);
+  float inc = speedRot*(PI/90);
   if(pmouseY > mouseY)
     rx = constrain(rx+inc, -PI/3, PI/3);
   else if (pmouseY < mouseY)
@@ -48,8 +48,8 @@ void mouseDragged() {
 void mouseWheel(MouseEvent event) {
   float inc = 0.0;
   if (event.getCount() < 0)
-    inc = 0.1;
+    inc = 0.2;
   else if (event.getCount() > 0)
-    inc = -0.1;
+    inc = -0.2;
   speedRot = constrain(speedRot + inc, 0.2, 1.5);
 }
