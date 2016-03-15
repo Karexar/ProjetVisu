@@ -3,7 +3,7 @@ class Mover {
   PVector location;
   PVector velocity;
   PVector gravityForce;
-  float gravityConstant = 9.81;
+  float gravityConstant = 0.981;
 
   Mover() {
     location = new PVector(0,0,0);
@@ -17,13 +17,13 @@ class Mover {
     velocity.add(gravityForce);
       
     float normalForce = 1;
-    float mu = 0.1;
+    float mu =0.01;
     float frictionMagnitude = normalForce * mu;
-    PVector friction = velocity.get();
+    PVector friction = velocity.copy();
     friction.mult(-1);
-    friction.normalize();
+    //friction.normalize();
     friction.mult(frictionMagnitude);
-    
+
     velocity.add(friction);
     
     location.add(velocity);
