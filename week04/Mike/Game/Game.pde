@@ -15,6 +15,7 @@ void settings() {
 }
 
 void setup() {
+   frameRate(30);
    noStroke();
 }
 
@@ -28,10 +29,12 @@ void draw() {
     translate(width/2, width/2, 0);
     rotateX(rotationX);
     rotateZ(rotationZ);
+    fill(100, 255, 100);
     box(plateWidth, plateHeight, plateLength);
     translate(0, -10 - ballRadius, 0); // on met la boule à hauteur du plateau
     ball.update();
     translate(ball.location.x, ball.location.y, ball.location.z);  // on place la boule au bon endroit
+    fill(100, 100, 100);
     sphere(10);
     
 }
@@ -49,14 +52,14 @@ void mouseDragged()
   else if (pmouseX > mouseX)
     rotationZ -= speed;
     
-  if (rotationX >= PI/6)
-    rotationX = PI/6;
-  if (rotationX <= -PI/6)
-    rotationX = -PI/6;
-  if (rotationZ >= PI/6)
-    rotationZ = PI/6;
-  if (rotationZ <= -PI/6)
-    rotationZ = -PI/6;
+  if (rotationX >= PI/3)
+    rotationX = PI/3;
+  if (rotationX <= -PI/3)
+    rotationX = -PI/3;
+  if (rotationZ >= PI/3)
+    rotationZ = PI/3;
+  if (rotationZ <= -PI/3)
+    rotationZ = -PI/3;
 }
 
 void mouseWheel(MouseEvent event){
