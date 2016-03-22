@@ -10,7 +10,7 @@ float boardDimY = 30;
 
 //ball
 Mover ball;
-float dimSphere = 30;
+float dimSphere = 20;
 
 void settings() {
   size(1000,800,P3D);
@@ -44,7 +44,7 @@ void draw() {
   ball.update(rx, rz);
   ball.checkEdges(dimSphere, boardDimXZ, boardDimXZ);
   translate(ball.location.x, - dimSphere-boardDimY/2, ball.location.z);
-  ball.display(dimSphere);
+  ball.display();
 }
 
 void mouseDragged() {
