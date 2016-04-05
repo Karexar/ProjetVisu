@@ -20,7 +20,7 @@ class Mover {
     velocity.add(gravityForce);
       
     float normalForce = 1;
-    float mu =0.01;
+    float mu =0.05;
     float frictionMagnitude = normalForce * mu;
     PVector friction = velocity.copy();
     friction.mult(-1);
@@ -37,7 +37,7 @@ class Mover {
   }
   
   void checkEdges(float dimSphere, float dimX, float dimZ) {
-    
+    checkCylinderCollision();
     float diffXPos = location.x + dimSphere - dimX/2;
     float diffXNeg = location.x - dimSphere + dimX/2;
     if (diffXPos > 0) {
@@ -56,6 +56,32 @@ class Mover {
     } else if (diffZNeg < 0){
       velocity.z *= -coefRebond;
       location.z -= diffZNeg;
+    }
+  }
+  
+  void checkCylinderCollision() {
+    for(int i=0; i < cylinders.size(); ++i){
+      /*double tmp = (location.x - cylinders.get(i).x) * (location.x - cylinders.get(i).x);
+      double tmp2 = (location.z - cylinders.get(i).y)* (location.z - cylinders.get(i).y);
+      if(tmp+tmp2 <= cylinderBaseSize*cylinderBaseSize){
+        PVector v = velocity.copy();
+        PVector normal = location.sub( new PVector(cylinders.get(i).x, location.y, cylinders.get(i).y));
+        normal.normalize();
+        PVector t = normal.mult(v.dot(normal)).mult(2);
+        velocity.sub(t);*/
+        PVector n = new PVector(cylinders.get(i).x - location.x, 
+                                  0,
+                                  cylinders.get(i).y - location.z);
+          float n_size = sqrt(n.x*n.x + n.z*n.z);
+          float limite = cylinderBaseSize + dimSphere;
+          if (n_size < limite)
+          {
+            PVector n_norm = n.normalize();
+            PVector v1 = velocity;
+            velocity = v1.sub(n_norm.mult(2*(v1.dot(n_norm))));
+            //velocity = velocity.mult(elasticiteObstacle);
+          }
+     
     }
   }
 }
