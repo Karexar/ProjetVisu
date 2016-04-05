@@ -186,7 +186,16 @@ void mousePressed()
   {
     case EDIT:
       PVector mapped = mapMouse(mouseX-width/2, mouseY-height/2);
-      if (mouseButton == LEFT) 
+      println(mapped.x + "   " + mapped.z);
+      println(ball.location.x + "   " + ball.location.y);
+      PVector d = new PVector(mapped.x - ball.location.x, 
+                              0, 
+                              mapped.z - ball.location.z);
+      float d_size = sqrt(d.x*d.x + d.z*d.z);
+                              
+      if (mouseButton == LEFT && d_size > ballRadius + cylinder.getBaseSize() &&
+          mapped.x >= -plateWidth/2 && mapped.x <= plateWidth/2 &&
+          mapped.z >= -plateLength/2 && mapped.z <= plateLength/2)
       {
         cylinders.add(new PVector(mapped.x, 0, mapped.z));
       }
