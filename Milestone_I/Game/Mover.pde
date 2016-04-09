@@ -13,7 +13,7 @@ class Mover {
         gravity = new PVector(0, 0, 0);
         gravityConstant = 9.81;
         elasticiteBord = 0.5;
-        elasticiteObstacle = 0.9;
+        elasticiteObstacle = 0.8;
       }
       
       void update() {
@@ -23,7 +23,7 @@ class Mover {
         float normalForce = 1;
         float mu = 0.05; // par défaut 0.01
         float frictionMagnitude = normalForce * mu;
-        PVector friction = velocity.get();
+        PVector friction = velocity.copy();
         friction.mult(-1);
         friction.normalize();
         friction.mult(frictionMagnitude);
@@ -68,31 +68,11 @@ class Mover {
           if (n_size < limite)
           {
             PVector n_norm = n.normalize();
-            PVector v1 = velocity;
+            PVector v1 = velocity.copy();
+            location.sub(v1);
             velocity = v1.sub(n_norm.mult(2*(v1.dot(n_norm))));
-            //velocity = velocity.mult(elasticiteObstacle);
+            velocity = velocity.mult(elasticiteObstacle);
           }
         }
       }
-      /*void checkCylinderCollision() {
-        int i = 0;
-        boolean freePath = true;
-        while (i < cylinders.size() && freePath)
-        {
-          PVector n = new PVector(cylinders.get(i).x - location.x, 
-                                  0,
-                                  cylinders.get(i).z - location.z);
-          float n_size = sqrt(n.x*n.x + n.z*n.z);
-          float limite = cylinder.getBaseSize() + ballRadius;
-          if (n_size < limite)
-          {
-            PVector n_norm = n.normalize();
-            PVector v1 = velocity;
-            velocity = v1.sub(n_norm.mult(2*(v1.dot(n_norm))));
-            //velocity = velocity.mult(elasticiteObstacle);
-            
-          }
-          ++i;
-        }
-      }*/
 }
