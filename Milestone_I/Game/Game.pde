@@ -20,9 +20,6 @@ enum Mode{
 };
 Mode mode = Mode.PLAY;
 
-PGraphics dataVisuBar;
-int dataVisuBarHeight = 100;
-
 void settings() {
    size(500, 500, P3D);
 }
@@ -34,7 +31,6 @@ void setup() {
    frameRate(FRAMERATE);
    noStroke();
    cylinder = new Cylinder();
-   dataVisuBar = createGraphics(width, 100, P2D);
 }
 
 void draw() {
@@ -80,19 +76,6 @@ void draw() {
   popMatrix();
   
   afficherStats();
-  
-  pushMatrix();
-  //rotateX(-PI * 45.0 / 180.0);
-  drawDataVisuBar();
-  image(dataVisuBar, 0, height-dataVisuBarHeight);
-  popMatrix();
-}
-
-void drawDataVisuBar()
-{
-  dataVisuBar.beginDraw();
-  dataVisuBar.background(255, 200, 150);
-  dataVisuBar.endDraw();
 }
 
 // A AMELIORER !!!
@@ -181,7 +164,6 @@ void mouseWheel(MouseEvent event){
   switch(mode)
   {
     case PLAY:
-      //System.out.println("test : " + event.getCount() + "  " + speed);
       if (event.getCount() > 0)
         speed = speed * 0.9;
       else if (event.getCount() < 0)
@@ -201,9 +183,7 @@ void mousePressed()
   switch(mode)
   {
     case EDIT:
-      PVector mapped = new PVector(mouseX-width/2,0, mouseY-height/2);//mapMouse(mouseX-width/2, mouseY-height/2);
-      println(mapped.x + "   " + mapped.z);
-      println(ball.location.x + "   " + ball.location.y);
+      PVector mapped = mapMouse(mouseX-width/2, mouseY-height/2);
       PVector d = new PVector(mapped.x - ball.location.x, 
                               0, 
                               mapped.z - ball.location.z);
