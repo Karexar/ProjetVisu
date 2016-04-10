@@ -13,7 +13,7 @@ class Mover {
         gravity = new PVector(0, 0, 0);
         gravityConstant = 9.81;
         elasticiteBord = 0.5;
-        elasticiteObstacle = 0.8;
+        elasticiteObstacle = 0.9;
       }
       
       void update() {
@@ -32,7 +32,6 @@ class Mover {
         location.add(velocity);
         checkEdges();
         checkCylinderCollision();
-        //checkLocation();
       }
       
       void checkEdges() {
@@ -66,32 +65,25 @@ class Mover {
           {
             PVector n_norm = n.normalize();
             PVector v1 = velocity.copy();
-            PVector v2 = velocity.copy();
-            velocity = v1.sub(n_norm.mult(2*(v1.dot(n_norm))));
-            velocity.mult(elasticiteObstacle);
-            location.sub(v2);
+            velocity = (v1.sub(n_norm.mult(2*(v1.dot(n_norm))))).mult(elasticiteObstacle);
+            
           }
+          checkLocation(i);
         }
       }
       
-      void checkLocation()
+      void checkLocation(int index)
       {
-        for (int i = 0 ; i < cylinders.size() ; ++i)
+        PVector n = new PVector(location.x - cylinders.get(index).x, 
+                                  0,
+                                  location.z - cylinders.get(index).z);
+        float n_size = sqrt(n.x*n.x + n.z*n.z);
+        float limite = cylinder.getBaseSize() + ballRadius;
+        if (n_size < limite)
         {
-          // On calcule le vecteur sortant du cylindre en direction de la boule
-          PVector n = new PVector(location.x - cylinders.get(i).x, 
-                                  0,
-                                  location.z - cylinders.get(i).z);
-          float n_size = sqrt(n.x*n.x + n.z*n.z);
-          float limite = cylinder.getBaseSize() + ballRadius;
-          while (n_size < limite)
-          {
-            location.add(n.mult(0.01));
-            n = new PVector(location.x - cylinders.get(i).x, 
-                                  0,
-                                  location.z - cylinders.get(i).z);
-            n_size = sqrt(n.x*n.x + n.z*n.z);
-          }
+          location.add(new PVector((int)Math.ceil(n.x * (limite-n_size) / n_size), 
+                                   0, 
+                                   (int)Math.ceil(n.z * (limite-n_size) / n_size)));
         }
       }
 }
