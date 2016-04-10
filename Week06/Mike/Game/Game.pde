@@ -81,21 +81,6 @@ void draw() {
   scrollbar.display(pg_scrollbar);
 }
 
-// A AMELIORER !!!
-// Permet d'ajuster les coordonnées de la souris pour
-// contrer l'effet de perspective lorsque l'on souhaite
-// afficher le cylindre à l'endroit de la souris
-// NE FONCTIONNE PAS AVEC D'AUTRES DIMENSIONS DU PLATEAU
-PVector mapMouse(int x, int y)
-{
-  int tailleApparente = 310; // obtenu en plaçant la souris sur le bord
-  // visible du plateau en mode EDIT, et en regardant ses coordonnées
-  // entre le bord gauche et le bord droit (et haut et bas)
-  return new PVector(x*plateWidth / tailleApparente, 
-                     0, 
-                     y*plateLength / tailleApparente);
-}
-
 void keyPressed()
 {
   if (key == CODED)
@@ -167,25 +152,28 @@ void mousePressed()
   switch(mode)
   {
     case EDIT:
-      PVector mapped = mapMouse(mouseX-pg_game.width/2, mouseY-pg_game.height/2);
-      PVector d = new PVector(mapped.x - ball.location.x, 
+      float x =map(mouseX-width/2, -155, 155, -plateWidth/2, plateWidth/2);
+      float z =map(mouseY-pg_game.height/2, -155, 155, -plateLength/2, plateLength/2);
+      
+      //PVector mapped = mapMouse(mouseX-width/2, mouseY-height/2);
+      PVector d = new PVector(x - ball.location.x, 
                               0, 
-                              mapped.z - ball.location.z);
+                              z - ball.location.z);
       float d_size = sqrt(d.x*d.x + d.z*d.z);
                               
       if (mouseButton == LEFT && d_size > ballRadius + cylinder.getBaseSize() &&
-          mapped.x >= -plateWidth/2 && mapped.x <= plateWidth/2 &&
-          mapped.z >= -plateLength/2 && mapped.z <= plateLength/2)
+          x >= -plateWidth/2 && x <= plateWidth/2 &&
+          z >= -plateLength/2 && z <= plateLength/2)
       {
-        cylinders.add(new PVector(mapped.x, 0, mapped.z));
+        cylinders.add(new PVector(x, 0, z));
       }
       else if (mouseButton == RIGHT)
       {
         for (int i = 0 ; i < cylinders.size() ; ++i)
         {
-          PVector n = new PVector(cylinders.get(i).x - mapped.x, 
+          PVector n = new PVector(cylinders.get(i).x - x, 
                                   0,
-                                  cylinders.get(i).z - mapped.z);
+                                  cylinders.get(i).z - z);
           float n_size = sqrt(n.x*n.x + n.z*n.z);
           if (n_size < cylinder.getBaseSize())
           {
