@@ -20,62 +20,65 @@ enum Mode{
 };
 Mode mode = Mode.PLAY;
 
+int score;
+int lastScore;
+
+PGraphics pg_dataBar;
+  int dataBarHeight = 100;
+PGraphics pg_game;
+PGraphics pg_mini;
+  int miniMapHeight = dataBarHeight-10;
+  int miniMapWidth = Math.round((plateWidth/plateLength) * miniMapHeight);
+PGraphics pg_score;
+PGraphics pg_chart;
+Chart chart;
+PGraphics pg_scrollbar;
+  int scrollBarWidth;
+  int scrollBarHeight;
+HScrollbar scrollbar;
+long start;
+long current;
+
+
 void settings() {
-   size(500, 500, P3D);
+   size(600, 600, P3D);
 }
 
 void setup() {
-   camera(width/2, 0, (height/2.0) / tan(PI * 45.0 / 180.0), 
-      width/2, height/2, 0, 
-      0, 1, 0);
    frameRate(FRAMERATE);
-   noStroke();
+   
+   start = System.nanoTime();
+   current = start;
+   
    cylinder = new Cylinder();
+   score = 0;
+   lastScore = 0;
+   pg_dataBar = createGraphics(width, 100, P2D);
+   pg_game = createGraphics(width, height-dataBarHeight, P3D);
+   pg_mini = createGraphics(miniMapWidth, miniMapHeight, P2D);
+   pg_score = createGraphics(80, dataBarHeight-10, P2D);
+   pg_chart = createGraphics(width - 5 - miniMapWidth - 15 - 80 - 15 -5, dataBarHeight-27, P2D);
+   scrollBarWidth = width - 5 - miniMapWidth - 15 - 80 - 15 - 5;
+   scrollBarHeight = 12;
+   pg_scrollbar = createGraphics(scrollBarWidth, scrollBarHeight);
+   scrollbar = new HScrollbar(5 + miniMapWidth + 15 + 80 + 15, height - 17, 
+                              scrollBarWidth, scrollBarHeight);
+   chart = new Chart(pg_chart.width, pg_chart.height, 160, 3, scrollbar.getPos(), 100);
 }
 
-void draw() {
-  background(200);
-  lights();
-  directionalLight(100, 100, 100, -1, 1, 0);
-  pushMatrix();
-  translate(width/2, height/2, 0);
-  fill(100, 255, 100);
-  
-  switch(mode)
+void draw() {      
+  drawGame();   
+  drawDataVisuBar();
+  drawMini();
+  drawScore();
+  if (System.nanoTime() - current > 1e9 && mode != Mode.EDIT)
   {
-    case PLAY:
-      rotateX(rotationX);
-      rotateZ(rotationZ);
-      ball.update();
-      break;
-    case EDIT:
-      rotateX((PI * 45.0 / 180.0) -PI/2);
-      break;
-    default:
-      break;
+    current = System.nanoTime();
+    chart.update(score);
   }
-  
-  box(plateWidth, plateHeight, plateLength);
-      
-  translate(0,-5 -ballRadius, 0); // on met la boule à hauteur du plateau
-  pushMatrix();
-  translate(ball.location.x, ball.location.y, ball.location.z);  // on place la boule au bon endroit
-  fill(100, 100, 100);
-  sphere(ballRadius);
-  popMatrix();
-      
-  translate(0, ballRadius, 0);  // On revient à hauteur du plateau EXACT
-      
-  for(int i = 0 ; i < cylinders.size() ; ++i)
-  {
-    pushMatrix();
-    translate(cylinders.get(i).x, 0, cylinders.get(i).z);
-    shape(cylinder.getCylinder());
-    popMatrix();
-  }
-  popMatrix();
-  
-  afficherStats();
+  drawChart();
+  scrollbar.update();
+  scrollbar.display(pg_scrollbar);
 }
 
 // A AMELIORER !!!
@@ -93,31 +96,6 @@ PVector mapMouse(int x, int y)
                      y*plateLength / tailleApparente);
 }
 
-void afficherStats()
-{
-  textSize(32);
-  switch(mode)
-  {
-    case EDIT:
-      pushMatrix();
-      rotateX(PI * 45.0 / 180.0);
-      fill(0);
-      text("Clic gauche : placer un obstacle", -100, -150, -500);
-      text("Clic droit : enlever l'obstacle", -100, -100, -500);
-      popMatrix();
-      break;
-    case PLAY:
-      pushMatrix();
-      rotateX(PI * 45.0 / 180.0);
-      fill(0);
-      text("Vitesse de rotation du plateau : " + int(speed*1000), -100, -150, -500);
-      popMatrix();
-      break;
-    default:
-      break;
-  }
-}
-
 void keyPressed()
 {
   if (key == CODED)
@@ -129,7 +107,10 @@ void keyReleased()
 {
   if (key == CODED)
     if (keyCode == SHIFT)
+    {
       mode = Mode.PLAY;
+      current = System.nanoTime();
+    }
 }
 
 void mouseDragged()
@@ -137,6 +118,8 @@ void mouseDragged()
   switch(mode)
   {
     case PLAY:
+    if (pmouseY < pg_game.height)
+    {
       if (pmouseY < mouseY)
         rotationX -= speed;
       else if (pmouseY > mouseY)
@@ -154,6 +137,7 @@ void mouseDragged()
         rotationZ = PI/3;
       if (rotationZ <= -PI/3)
         rotationZ = -PI/3;
+    }
       break;
     default:
       break;
@@ -183,7 +167,7 @@ void mousePressed()
   switch(mode)
   {
     case EDIT:
-      PVector mapped = mapMouse(mouseX-width/2, mouseY-height/2);
+      PVector mapped = mapMouse(mouseX-pg_game.width/2, mouseY-pg_game.height/2);
       PVector d = new PVector(mapped.x - ball.location.x, 
                               0, 
                               mapped.z - ball.location.z);

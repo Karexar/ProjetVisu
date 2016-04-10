@@ -13,7 +13,7 @@ class Mover {
         gravity = new PVector(0, 0, 0);
         gravityConstant = 9.81;
         elasticiteBord = 0.5;
-        elasticiteObstacle = 0.8;
+        elasticiteObstacle = 0.9;
       }
       
       void update() {
@@ -40,23 +40,37 @@ class Mover {
       
       void checkEdges() {
         if (location.x > plateWidth/2) {
+          reduceScore();
           location.x = plateWidth/2;
           velocity.x = velocity.x*-1*elasticiteBord;
         }
         else if (location.x < -plateWidth/2) {
+          reduceScore();
           location.x = -plateWidth/2;
           velocity.x = velocity.x*-1*elasticiteBord;
         }
         if (location.z > plateLength/2) {
+          reduceScore();
           location.z = plateLength/2;
           velocity.z = velocity.z*-1*elasticiteBord;
         }
         else if (location.z < -plateLength/2) {
+          reduceScore();
           location.z = -plateLength/2;
           velocity.z = velocity.z*-1*elasticiteBord;
         }
       } 
       
+      void reduceScore()
+      {
+          if (score - Math.round(velocity.mag()) < 0) 
+            score = 0;
+          else 
+            score -= Math.round(velocity.mag());
+          lastScore = -Math.round(velocity.mag());
+      }
+      
+      // A AMELIORER : Parfois ça bug, la balle est aspirée par un cylindre
       void checkCylinderCollision() {
         for (int i = 0 ; i < cylinders.size() ; ++i)
         {
@@ -67,8 +81,12 @@ class Mover {
           float limite = cylinder.getBaseSize() + ballRadius;
           if (n_size < limite)
           {
+            score += Math.round(velocity.mag());
+            lastScore = Math.round(velocity.mag());
             PVector n_norm = n.normalize();
             PVector v1 = velocity.copy();
+            //location.sub(v1); // Enlève bug aspiration balle mais effet
+            // indésarible lors des rebonds quand la boule frôle.
             velocity = v1.sub(n_norm.mult(2*(v1.dot(n_norm))));
             velocity = velocity.mult(elasticiteObstacle);
           }
@@ -95,4 +113,5 @@ class Mover {
           }
         }
       }
+      
 }
