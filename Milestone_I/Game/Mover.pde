@@ -63,27 +63,17 @@ class Mover {
           float limite = cylinder.getBaseSize() + ballRadius;
           if (n_size < limite)
           {
-            PVector n_norm = n.normalize();
+            PVector ntmp = n.copy();
+            PVector n_norm = ntmp.normalize();
             PVector v1 = velocity.copy();
-            velocity = (v1.sub(n_norm.mult(2*(v1.dot(n_norm))))).mult(elasticiteObstacle);
+            velocity.sub(n_norm.mult(2*(v1.dot(n_norm)))).mult(elasticiteObstacle);
             
-          }
-          checkLocation(i);
-        }
-      }
-      
-      void checkLocation(int index)
-      {
-        PVector n = new PVector(location.x - cylinders.get(index).x, 
-                                  0,
-                                  location.z - cylinders.get(index).z);
-        float n_size = sqrt(n.x*n.x + n.z*n.z);
-        float limite = cylinder.getBaseSize() + ballRadius;
-        if (n_size < limite)
-        {
-          location.add(new PVector((int)Math.ceil(n.x * (limite-n_size) / n_size), 
+            n.mult(-1);
+            location.add(new PVector(n.x * (limite-n_size) / n_size, 
                                    0, 
-                                   (int)Math.ceil(n.z * (limite-n_size) / n_size)));
+                                   n.z * (limite-n_size) / n_size));
+          }
         }
       }
+
 }
