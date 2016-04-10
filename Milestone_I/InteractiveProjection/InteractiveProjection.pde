@@ -31,12 +31,12 @@ void draw() {
 
 
 My2DBox projectBox (My3DPoint eye, My3DBox box) {
-  My2DPoint[] s = new My2DPoint[box.p.length];
-  for (int i = 0 ; i < s.length ; ++i)
+  My2DPoint[] points = new My2DPoint[box.p.length];
+  for (int i = 0 ; i < points.length ; ++i)
   {
-    s[i] = projectPoint(eye, box.p[i]);
+    points[i] = projectPoint(eye, box.p[i]);
   }
-  return new My2DBox(s);
+  return new My2DBox(points);
 }
 
 My2DPoint projectPoint(My3DPoint eye, My3DPoint p) {
@@ -89,11 +89,11 @@ float[][] translationMatrix(float x, float y, float z) {
 // Step 3 - Matrix Product
 
 float[] matrixProduct(float[][] a, float[] b) { 
-  float c[] = {0.0, 0.0, 0.0, 0.0};
+  float res[] = {0.0, 0.0, 0.0, 0.0};
   for(int i = 0; i < 4 ; ++i)
     for(int j = 0 ; j < 4 ; ++j)
-      c[i] += a[i][j] * b[j];
-  return c;
+      res[i] += a[i][j] * b[j];
+  return res;
 }
 
 My3DBox transformBox(My3DBox box, float[][] transformMatrix) {
