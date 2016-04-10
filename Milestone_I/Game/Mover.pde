@@ -19,7 +19,7 @@ class Mover {
       void update() {
         gravity.x = sin(rotationZ) * gravityConstant / FRAMERATE;
         gravity.z = -sin(rotationX) * gravityConstant / FRAMERATE;
-        
+        velocity.add(gravity);
         float normalForce = 1;
         float mu = 0.05; // par défaut 0.01
         float frictionMagnitude = normalForce * mu;
@@ -28,14 +28,11 @@ class Mover {
         friction.normalize();
         friction.mult(frictionMagnitude);
         
-        velocity.add(gravity);
         velocity.add(friction);
-        
+        location.add(velocity);
         checkEdges();
         checkCylinderCollision();
-        checkLocation();
-        
-        location.add(velocity);
+        //checkLocation();
       }
       
       void checkEdges() {
@@ -69,8 +66,10 @@ class Mover {
           {
             PVector n_norm = n.normalize();
             PVector v1 = velocity.copy();
+            PVector v2 = velocity.copy();
             velocity = v1.sub(n_norm.mult(2*(v1.dot(n_norm))));
-            velocity = velocity.mult(elasticiteObstacle);
+            velocity.mult(elasticiteObstacle);
+            location.sub(v2);
           }
         }
       }
