@@ -30,12 +30,10 @@ class Mover {
         
         velocity.add(gravity);
         velocity.add(friction);
+        location.add(velocity);
         
         checkEdges();
         checkCylinderCollision();
-        checkLocation();
-        
-        location.add(velocity);
       }
       
       void checkEdges() {
@@ -83,35 +81,16 @@ class Mover {
           {
             score += Math.round(velocity.mag());
             lastScore = Math.round(velocity.mag());
-            PVector n_norm = n.normalize();
+            PVector ntmp = n.copy();
+            PVector n_norm = ntmp.normalize();
             PVector v1 = velocity.copy();
-            //location.sub(v1); // Enlève bug aspiration balle mais effet
-            // indésarible lors des rebonds quand la boule frôle.
-            velocity = v1.sub(n_norm.mult(2*(v1.dot(n_norm))));
-            velocity = velocity.mult(elasticiteObstacle);
+            velocity.sub(n_norm.mult(2*(v1.dot(n_norm)))).mult(elasticiteObstacle);
+            
+            n.mult(-1);
+            location.add(new PVector(n.x * (limite-n_size) / n_size, 
+                                   0, 
+                                   n.z * (limite-n_size) / n_size));
           }
         }
       }
-      
-      void checkLocation()
-      {
-        for (int i = 0 ; i < cylinders.size() ; ++i)
-        {
-          // On calcule le vecteur sortant du cylindre en direction de la boule
-          PVector n = new PVector(location.x - cylinders.get(i).x, 
-                                  0,
-                                  location.z - cylinders.get(i).z);
-          float n_size = sqrt(n.x*n.x + n.z*n.z);
-          float limite = cylinder.getBaseSize() + ballRadius;
-          while (n_size < limite)
-          {
-            location.add(n.mult(0.01));
-            n = new PVector(location.x - cylinders.get(i).x, 
-                                  0,
-                                  location.z - cylinders.get(i).z);
-            n_size = sqrt(n.x*n.x + n.z*n.z);
-          }
-        }
-      }
-      
 }
