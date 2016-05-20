@@ -6,9 +6,11 @@ Capture cam;
 /********************************************************/
 /***                      SETTINGS                    ***/  
 /********************************************************/
-/**/      int MIN_VOTES      =   170;                      
+/**/      int MIN_VOTES      =   150;                      
 /**/      boolean CAM_ACTIVE =   false;
-/**/      int IMAGE_NB       =   2;
+/**/      int IMAGE_NB       =   1;
+/**/      int RES_IMG_X      =   600;
+/**/      int RES_IMG_Y      =   450;
 /**/      int MIN_HUE        =   81;  // 81 normalement
 /**/      int MAX_HUE        =   140; // 140 normalement
 /**/      int MIN_BRIGHTNESS =   10;
@@ -17,17 +19,20 @@ Capture cam;
 /**/      int MAX_SATURATION =   255;
 /**/      int MIN_INTENSITY  =   100;
 /**/      int MAX_INTENSITY  =   255;
-/**/      int BEST_LINE_NB   =   4;
-/**/      int MIN_AREA       =   30000;
-/**/      int MAX_AREA       =   1500000;
+/**/      int BEST_LINE_NB   =   6;
+/**/      int MIN_AREA       =   50000;
+/**/      int MAX_AREA       =   750000;
 /********************************************************/
+
+int RES_ACC_X = RES_IMG_Y;
+int RES_ACC_Y = RES_IMG_Y;
 
 void settings() 
 {
   if (CAM_ACTIVE)
     size(640 + 400, 360);
   else
-    size(800 + 400, 600);
+    size(RES_IMG_X + RES_ACC_X + RES_IMG_X, RES_IMG_Y);
 }
 
 void setup() 
@@ -54,6 +59,7 @@ void setup()
   else
   {  
     img = loadImage("board" + IMAGE_NB + ".jpg");
+    img.resize(RES_IMG_X, RES_IMG_Y);
     noLoop();
   }
 }
@@ -69,7 +75,7 @@ void draw()
     img = cam.get();
   }
   
-  //image(img, 0, 0);
+  image(img, 0, 0);
   
   //--- On filtre le hue, la saturation, et la brightness
   filter_image(img, MIN_HUE, MAX_HUE, Filter.HUE);  // le vert est officiellement entre 81 et 140
@@ -87,23 +93,23 @@ void draw()
   
   //--- On applique sobel
   PImage img_sobel = sobel(blurred_image);
-  image(img_sobel, 0, 0);
   
-  //--- On applique hough
+  //--- On applique hough et on récupère les lignes
   ArrayList<PVector> lines = hough(img_sobel, BEST_LINE_NB);
-  println("lines : " + lines);
+  //--- On crée le quadgraph
   QuadGraph graph = new QuadGraph();
-  graph.build(lines, width-400, height);
+  graph.build(lines, img_sobel.width, img_sobel.height);
+  //--- On récupère les cycles d'après les intersections de lignes
   List<int[]> cycles = graph.findCycles();
-  println("cycles : " + cycles.size());
-  List<int[]> quads = new ArrayList<int[]>();
-  List<PVector[]> final_quads = new ArrayList<PVector[]>();
   // On garde uniquement les cycles de taille 4
+  List<int[]> quads = new ArrayList<int[]>();
   for (int[] c : cycles)
     if (c.length == 4)
       quads.add(c);
-  println("quads : " + cycles.size());
-  for (int[] quad : quads) 
+
+  //--- On crée la liste des quads finaux, chaque étant un PVector des intersections
+  List<PVector[]> final_quads = new ArrayList<PVector[]>();
+  for (int[] quad : quads)
   {
     PVector l1 = lines.get(quad[0]);
     PVector l2 = lines.get(quad[1]);
@@ -119,19 +125,55 @@ void draw()
     PVector c41 = intersection(l4, l1);
     
     // On applique les critères pour garder uniquement les quads valides
-    /*if (graph.isConvex(c12, c23, c34, c41) && 
+    if (graph.isConvex(c12, c23, c34, c41) && 
         graph.validArea(c12, c23, c34, c41, MAX_AREA, MIN_AREA) &&
         graph.nonFlatQuad(c12, c23, c34, c41)) 
         {
           PVector[] q = {c12, c23, c34, c41};
           final_quads.add(q);
-        }*/
-    PVector[] q = {c12, c23, c34, c41};
-    println("intersections : " + c12 + " " + c23 + " " +c34 + " " +c41);
-    final_quads.add(q);
+        }
   }
   
-  //--- On affiche les quads
+  //--- On garde uniquement le quad le plus grand
+  if (final_quads.size() > 0)
+  {
+    PVector[] bestQuad = final_quads.get(0);
+    float bestQuadArea = graph.area(bestQuad[0], bestQuad[1], bestQuad[2], bestQuad[3]);
+    for (int i = 1 ; i < final_quads.size() ; ++i)
+    {
+      PVector[] q = final_quads.get(i);
+      float qArea = graph.area(q[0], q[1], q[2], q[3]);
+      if (qArea > bestQuadArea)
+      {
+        bestQuad = q;
+        bestQuadArea = qArea;
+      }
+    }
+   
+    //On affiche le quad le plus grand
+    PVector[] q = bestQuad;
+    /*Random random = new Random();
+    fill(color(min(255, random.nextInt(300)),
+                min(255, random.nextInt(300)),
+                min(255, random.nextInt(300)), 50));
+    
+    quad(q[0].x, q[0].y, q[1].x, q[1].y, q[2].x, q[2].y, q[3].x, q[3].y);*/
+    
+    // On affiche les intersections
+    
+    fill(255, 128, 0);
+    ellipse(q[0].x, q[0].y, 10, 10);
+    ellipse(q[1].x, q[1].y, 10, 10);
+    ellipse(q[2].x, q[2].y, 10, 10);
+    ellipse(q[3].x, q[3].y, 10, 10);
+   
+  }
+  
+  // On affiche à droite le résultat du sobel
+  
+  image(img_sobel, RES_IMG_X + RES_ACC_X, 0);
+  
+  /*//--- On affiche les quads
   for (PVector[] q : final_quads)
   {
     // Choose a random, semi-transparent colour
@@ -141,6 +183,6 @@ void draw()
                 min(255, random.nextInt(300)), 50));
     
     quad(q[0].x, q[0].y, q[1].x, q[1].y, q[2].x, q[2].y, q[3].x, q[3].y); 
-    //quad(c12.x,c12.y,c23.x,c23.y,c34.x,c34.y,c41.x,c41.y);
-  }
+  }*/
+  
 }

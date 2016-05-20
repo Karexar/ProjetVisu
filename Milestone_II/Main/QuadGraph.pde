@@ -241,6 +241,19 @@ class QuadGraph {
    */
   boolean validArea(PVector c1, PVector c2, PVector c3, PVector c4, float max_area, float min_area) {
 
+    float area = area(c1, c2, c3, c4);
+
+    //System.out.println(area);
+
+    boolean valid = (area < max_area && area > min_area);
+
+    if (!valid) System.out.println("Area out of range");
+
+    return valid;
+  }
+  
+  float area(PVector c1, PVector c2, PVector c3, PVector c4)
+  {
     PVector v21= PVector.sub(c1, c2);
     PVector v32= PVector.sub(c2, c3);
     PVector v43= PVector.sub(c3, c4);
@@ -252,14 +265,8 @@ class QuadGraph {
     float i4=v14.cross(v21).z;
 
     float area = Math.abs(0.5f * (i1 + i2 + i3 + i4));
-
-    //System.out.println(area);
-
-    boolean valid = (area < max_area && area > min_area);
-
-    if (!valid) System.out.println("Area out of range");
-
-    return valid;
+    
+    return area;
   }
 
   /** Compute the (cosine) of the four angles of the quad, and check they are all large enough

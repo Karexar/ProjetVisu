@@ -130,7 +130,7 @@ ArrayList<PVector> hough(PImage edgeImg, int nLines) {
   ArrayList<Integer> bestN = new ArrayList<Integer>(bestCandidates.subList(0, index));
   
   //----------------------------------------------------------
-  // Display lines and create an array of lines
+  // Create an array of lines
   //----------------------------------------------------------
   ArrayList<PVector> lines = new ArrayList<PVector>();
   for (int i = 0; i < bestN.size(); i++) 
@@ -144,58 +144,16 @@ ArrayList<PVector> hough(PImage edgeImg, int nLines) {
       float r = (accR - (rDim - 1) * 0.5f) * discretizationStepsR;
       float phi = accPhi * discretizationStepsPhi;
       lines.add(new PVector(r, phi));
-      // Cartesian equation of a line: y = ax + b
-      // in polar, y = (-cos(phi)/sin(phi))x + (r/sin(phi))
-      // => y = 0 : x = r / cos(phi)
-      // => x = 0 : y = r / sin(phi)
-      
-      // compute the intersection of this line with the 4 borders of the image
-      int x0 = 0;
-      int y0 = (int) (r / sin(phi));
-      int x1 = (int) (r / cos(phi));
-      int y1 = 0;
-      int x2 = edgeImg.width;
-      int y2 = (int) (-cos(phi) / sin(phi) * x2 + r / sin(phi));
-      int y3 = edgeImg.width;
-      int x3 = (int) (-(y3 - r / sin(phi)) * (sin(phi) / cos(phi)));
-      
-      // Finally, plot the lines
-      stroke(204,102,0);
-      if (y0 > 0) 
-      {
-        if (x1 > 0)
-          line(x0, y0, x1, y1);
-        else if (y2 > 0)
-          line(x0, y0, x2, y2);
-        else
-          line(x0, y0, x3, y3);
-      }
-      else 
-      {
-        if (x1 > 0) 
-        {
-          if (y2 > 0)
-            line(x1, y1, x2, y2);
-          else
-            line(x1, y1, x3, y3);
-        }
-        else
-          line(x2, y2, x3, y3);
-      }
     }
   }
+  display_lines(edgeImg, lines);
   
+  displayAccumulator(rDim, phiDim, accumulator);
   //----------------------------------------------------------
   // Compute intersections
   //----------------------------------------------------------
   
-  ArrayList<PVector> intersections = getIntersections(lines);
-  
-  //----------------------------------------------------------
-  // Display the content of the accumulator
-  //----------------------------------------------------------
-  
-  displayAccumulator(rDim, phiDim, accumulator);
+  getIntersections(lines);
   
   return lines;
 }
@@ -232,7 +190,7 @@ void displayAccumulator(int rDim, int phiDim, int[] accumulator)
 {
   noStroke();
   fill(255);
-  rect(width-400, 0, 400, height);
+  rect(RES_IMG_X, 0, RES_ACC_X, RES_ACC_Y);
   PImage houghImg = createImage(rDim + 2, phiDim + 2, ALPHA);
   houghImg.loadPixels();
   for (int i = 0; i < accumulator.length; i++) 
@@ -241,8 +199,8 @@ void displayAccumulator(int rDim, int phiDim, int[] accumulator)
   }
   houghImg.updatePixels();
   // You may want to resize the accumulator to make it easier to see:
-  houghImg.resize(400, 400);
-  image(houghImg, width-400, 0);
+  houghImg.resize(RES_ACC_X, RES_ACC_Y);
+  image(houghImg, RES_IMG_X, 0);
 }
 
 //**********************************************************//
@@ -267,9 +225,6 @@ ArrayList<PVector> getIntersections(List<PVector> lines)
             float x = (line2.x * sinPhi_1 - line1.x * sinPhi_2) / d;
             float y = (-line2.x * cosPhi_1 + line1.x * cosPhi_2) / d;
             intersections.add(new PVector(x, y));
-            // draw the intersection
-            fill(255, 128, 0);
-            ellipse(x, y, 10, 10);
         }
     }
     return intersections;
@@ -279,6 +234,56 @@ PVector intersection(PVector l1, PVector l2)
 {
   float d = cos(l2.y) * sin(l1.y) - cos(l1.y) * sin(l2.y);
   float x = (l2.x * sin(l1.y) - l1.x * sin(l2.y)) / d;
-  float y = (-l2.x * cos(l1.y) + l1.x * sin(l2.y)) / d;
+  float y = (-l2.x * cos(l1.y) + l1.x * cos(l2.y)) / d;
   return new PVector(x, y);
+}
+
+//**********************************************************//
+//  Display lines
+//**********************************************************//
+
+void display_lines(PImage edgeImg, ArrayList<PVector> lines)
+{
+  for (PVector l : lines)
+  {
+    float r = l.x;
+    float phi = l.y;
+    // Cartesian equation of a line: y = ax + b
+    // in polar, y = (-cos(phi)/sin(phi))x + (r/sin(phi))
+    // => y = 0 : x = r / cos(phi)
+    // => x = 0 : y = r / sin(phi)
+    // compute the intersection of this line with the 4 borders of the image
+    int x0 = 0;
+    int y0 = (int) (r / sin(phi));
+    int x1 = (int) (r / cos(phi));
+    int y1 = 0;
+    int x2 = edgeImg.width;
+    int y2 = (int) (-cos(phi) / sin(phi) * x2 + r / sin(phi));
+    int y3 = edgeImg.width;
+    int x3 = (int) (-(y3 - r / sin(phi)) * (sin(phi) / cos(phi)));
+          
+    // Finally, plot the lines
+    stroke(204,102,0);
+    if (y0 > 0) 
+    {
+      if (x1 > 0)
+        line(x0, y0, x1, y1);
+      else if (y2 > 0)
+        line(x0, y0, x2, y2);
+      else
+        line(x0, y0, x3, y3);
+    }
+    else 
+    {
+      if (x1 > 0) 
+      {
+        if (y2 > 0)
+          line(x1, y1, x2, y2);
+        else
+          line(x1, y1, x3, y3);
+      }
+      else
+        line(x2, y2, x3, y3);
+    }
+  }
 }
