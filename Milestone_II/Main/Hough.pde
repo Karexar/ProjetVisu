@@ -146,7 +146,6 @@ ArrayList<PVector> hough(PImage edgeImg, int nLines) {
       lines.add(new PVector(r, phi));
     }
   }
-  display_lines(edgeImg, lines);
   
   displayAccumulator(rDim, phiDim, accumulator);
   //----------------------------------------------------------
@@ -242,7 +241,7 @@ PVector intersection(PVector l1, PVector l2)
 //  Display lines
 //**********************************************************//
 
-void display_lines(PImage edgeImg, ArrayList<PVector> lines)
+void display_lines(PImage edgeImg, PVector[] lines)
 {
   for (PVector l : lines)
   {
@@ -261,7 +260,30 @@ void display_lines(PImage edgeImg, ArrayList<PVector> lines)
     int y2 = (int) (-cos(phi) / sin(phi) * x2 + r / sin(phi));
     int y3 = edgeImg.width;
     int x3 = (int) (-(y3 - r / sin(phi)) * (sin(phi) / cos(phi)));
-          
+        
+    ArrayList<PVector> res = new ArrayList<PVector>();
+    
+    if (y0 >= 0 && y0 < edgeImg.height)
+      res.add(new PVector(x0, y0));
+    if (x1 >= 0 && x1 < edgeImg.width)
+      res.add(new PVector(x1, y1));
+    if (y2 >= 0 && y2 < edgeImg.height)
+      res.add(new PVector(x2, y2));
+    if (x3 >= 0 && x3 < edgeImg.width)
+      res.add(new PVector(x3, y3));
+      
+    if (res.size() == 2)
+    {
+      stroke(204,102,0);
+      line(res.get(0).x, res.get(0).y, res.get(1).x, res.get(1).y);
+    }
+    else
+    {
+       println("Erreur, l'intersection des lignes avec les bords de l'image" +
+         " ne donne pas deux résultats comme attendu"); 
+    }
+      
+    /*
     // Finally, plot the lines
     stroke(204,102,0);
     if (y0 > 0) 
@@ -284,6 +306,6 @@ void display_lines(PImage edgeImg, ArrayList<PVector> lines)
       }
       else
         line(x2, y2, x3, y3);
-    }
+    }*/
   }
 }
