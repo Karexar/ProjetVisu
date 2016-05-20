@@ -40,10 +40,7 @@ ArrayList<PVector> hough(PImage edgeImg, int nLines) {
       // Are we on an edge?
       if (brightness(edgeImg.pixels[y * edgeImg.width + x]) != 0) 
       {
-        //for (int i = 0 ; i < phiDim ; ++i)
-        //{
-        float phi = 0;
-        for (int accPhi = 0 ; accPhi < phiDim ; phi+=discretizationStepsPhi, ++accPhi)
+        for (int accPhi = 0 ; accPhi < phiDim ; ++accPhi)
         {
           // ...determine here all the lines (r, phi) passing through
           // pixel (x,y), convert (r,phi) to coordinates in the
@@ -52,13 +49,9 @@ ArrayList<PVector> hough(PImage edgeImg, int nLines) {
           // the accumulator with something like: r += (rDim - 1) / 2
         
           int r_acc_max = rDim+2;
-          //float r = x * tabCos[(int)(phi/discretizationStepsPhi)] + y * sin(phi);
           float r = x * tabCos[accPhi] + y * tabSin[accPhi];
-          //float r = x * tabCos[i] + y * tabSin[i];
           int r_acc = (int) (r + (rDim -1) / 2); 
-          //int phi_acc = round(phi / discretizationStepsPhi);  
           accumulator[(accPhi+1) * (r_acc_max) + r_acc+2] += 1;        // +2 marche mieux que +1 ?!?!
-          //accumulator[(i+1) * (r_acc_max) + r_acc+2] += 1;        // +2 marche mieux que +1 ?!?!
         }
       } 
     }
@@ -114,15 +107,6 @@ ArrayList<PVector> hough(PImage edgeImg, int nLines) {
       }
     }
   }
-  
-  // Ici on ajoute tous les idx dont la valeur associée est plus haute que min_votes
-  /*for (int idx = 0; idx < accumulator.length; idx++) 
-  {
-    if (accumulator[idx] > MIN_VOTES) 
-    {
-      bestCandidates.add(idx);
-    }
-  }*/
   
   Collections.sort(bestCandidates, new HoughComparator(accumulator));
   
@@ -282,30 +266,5 @@ void display_lines(PImage edgeImg, PVector[] lines)
        println("Erreur, l'intersection des lignes avec les bords de l'image" +
          " ne donne pas deux résultats comme attendu"); 
     }
-      
-    /*
-    // Finally, plot the lines
-    stroke(204,102,0);
-    if (y0 > 0) 
-    {
-      if (x1 > 0)
-        line(x0, y0, x1, y1);
-      else if (y2 > 0)
-        line(x0, y0, x2, y2);
-      else
-        line(x0, y0, x3, y3);
-    }
-    else 
-    {
-      if (x1 > 0) 
-      {
-        if (y2 > 0)
-          line(x1, y1, x2, y2);
-        else
-          line(x1, y1, x3, y3);
-      }
-      else
-        line(x2, y2, x3, y3);
-    }*/
   }
 }
