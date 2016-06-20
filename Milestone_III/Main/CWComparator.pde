@@ -38,7 +38,7 @@ public static List<PVector> sortCorners(List<PVector> quad)
       min = i;
     }
   }
-  
+
   Collections.rotate(quad, min);
   
   return quad;

@@ -119,10 +119,11 @@ void draw()
   ArrayList<PVector[]> bestQuad = getBestQuad(lines, img_sobel);
   if (bestQuad != null)
   {
+    // On trie le quad
+    List<PVector> sortedCorners = sortCorners(Arrays.asList(bestQuad.get(0)));
     // On affiche les angles
-    
     TwoDThreeD tmp = new TwoDThreeD(RES_IMG_X, RES_IMG_Y);
-    PVector angles = tmp.get3DRotations(Arrays.asList(bestQuad.get(0)));
+    PVector angles = tmp.get3DRotations(sortedCorners);
     println("affichage des angles : ");
     println(Math.toDegrees(angles.x));
     println(Math.toDegrees(angles.y));
