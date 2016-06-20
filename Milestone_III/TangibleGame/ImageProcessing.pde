@@ -16,6 +16,7 @@ void process_image()
   
   //--- On applique hough et on récupère les lignes
   ArrayList<PVector> lines = hough(img_sobel, BEST_LINE_NB);
+  println(lines.size());
    
   //--- On récupère le meilleur quad
   ArrayList<PVector[]> bestQuad = getBestQuad(lines, img_sobel);
@@ -24,14 +25,35 @@ void process_image()
     // On trie le quad
     List<PVector> sortedCorners = sortCorners(Arrays.asList(bestQuad.get(0)));
     // On affiche les angles
-    TwoDThreeD tmp = new TwoDThreeD(RES_IMG_X, RES_IMG_Y);
+    TwoDThreeD tmp = new TwoDThreeD(RES_VIDEO_GAME_X, RES_VIDEO_GAME_Y);
     PVector angles = tmp.get3DRotations(sortedCorners);
     println("affichage des angles : ");
     println(Math.toDegrees(angles.x));
     println(Math.toDegrees(angles.y));
     println(Math.toDegrees(angles.z));
     
-    //PVector[] q_inter = bestQuad.get(0);
-    //PVector[] q_lines = bestQuad.get(1);
+    rotationX = angles.x;
+    rotationZ = angles.y;
+    
+    PVector[] q_inter = bestQuad.get(0);
+    PVector[] q_lines = bestQuad.get(1);
+    
+    //--- On affiche les lignes
+    loadPixels();
+    pg_video.beginDraw();
+    pg_video.fill(255, 128, 0);
+    display_lines(img, q_lines);
+    
+    //--- On affiche les intersections
+    pg_video.ellipse(q_inter[0].x, q_inter[0].y, 10, 10);
+    pg_video.ellipse(q_inter[1].x, q_inter[1].y, 10, 10);
+    pg_video.ellipse(q_inter[2].x, q_inter[2].y, 10, 10);
+    pg_video.ellipse(q_inter[3].x, q_inter[3].y, 10, 10);
+    
+    println("TESTESE");
+    
+    pg_video.endDraw();
+    updatePixels();
+    image(pg_video, RES_VIDEO_GAME_X, 0);
   }
 }

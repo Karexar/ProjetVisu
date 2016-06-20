@@ -141,3 +141,29 @@ void drawChart()
   pg_chart.endDraw();
   image(pg_chart, 5 + miniMapWidth + 15 + 80 + 15, height-dataBarHeight+5);
 }
+
+void drawVideo()
+{
+  updatePixels();
+  if (img.width != 0)
+    img.resize(RES_VIDEO_GAME_X, img.height*RES_VIDEO_GAME_X/img.width);
+  image(img, RES_VIDEO_GAME_X, 0);
+  loadPixels();
+}
+
+/*
+void drawCamera()
+{
+  updatePixels();
+  if (img.width != 0)
+    img.resize(RES_VIDEO_GAME_X, img.height*RES_VIDEO_GAME_X/img.width);
+  image(img, RES_VIDEO_GAME_X, 0);
+  loadPixels();
+  
+  pg_video.beginDraw();
+  if (img.width != 0)
+    img.resize(RES_VIDEO_GAME_X, img.height*RES_VIDEO_GAME_X/img.width);
+  pg_video.image(img, RES_VIDEO_GAME_X, 0);
+  pg_video.endDraw();
+  image(pg_video, RES_VIDEO_GAME_X, 0);
+}*/

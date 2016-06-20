@@ -90,7 +90,7 @@ class Mover {
                                    0, 
                                    n.z * (limite-n_size) / n_size));
             
-            cylinders.remove(i);
+            //cylinders.remove(i);
           }
         }
       }

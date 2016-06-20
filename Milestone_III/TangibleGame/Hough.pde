@@ -252,8 +252,8 @@ void display_lines(PImage edgeImg, PVector[] lines)
       
     if (res.size() == 2)
     {
-      stroke(204,102,0);
-      line(res.get(0).x, res.get(0).y, res.get(1).x, res.get(1).y);
+      pg_video.stroke(204,102,0);
+      pg_video.line(res.get(0).x, res.get(0).y, res.get(1).x, res.get(1).y);
     }
     else
     {

@@ -2,6 +2,7 @@ import processing.video.*;
 
 PImage img;
 Capture cam;
+Movie movie;
 
 float rotationX = 0.0;
 float rotationZ = 0.0;
@@ -18,7 +19,8 @@ Cylinder cylinder;
 ArrayList<PVector> cylinders = new ArrayList<PVector>();
 
 final float FRAMERATE = 30;
-enum Mode{
+enum Mode
+{
  PLAY, 
  EDIT
 };
@@ -30,6 +32,7 @@ int lastScore;
 PGraphics pg_dataBar;
   int dataBarHeight = 100;
 PGraphics pg_game;
+PGraphics pg_video;
 PGraphics pg_mini;
   int miniMapHeight = dataBarHeight-10;
   int miniMapWidth = Math.round((plateWidth/plateLength) * miniMapHeight);
@@ -47,7 +50,7 @@ long current;
 void settings() 
 {
    //size(600, 600, P3D);
-   size(2*RES_VIDEO_GAME_X, RES_VIDEO_GAME_Y); 
+   size(2*RES_VIDEO_GAME_X, RES_VIDEO_GAME_Y, P3D); 
 }
 
 void setup() 
@@ -71,6 +74,11 @@ void setup()
       cam.start();
     }
   }
+  else
+  {
+    movie = new Movie(this, "testvideo.mp4"); //Put the video in the same directory cam.loop();
+    movie.loop();
+  }
   
    frameRate(FRAMERATE);
    
@@ -80,12 +88,13 @@ void setup()
    cylinder = new Cylinder();
    score = 0;
    lastScore = 0;
-   pg_dataBar = createGraphics(width, 100, P2D);
-   pg_game = createGraphics(width, height-dataBarHeight, P3D);
+   pg_game = createGraphics(RES_VIDEO_GAME_X, RES_VIDEO_GAME_Y-dataBarHeight, P3D);
+   pg_video = createGraphics(RES_VIDEO_GAME_X, RES_VIDEO_GAME_Y-dataBarHeight, P2D);
+   pg_dataBar = createGraphics(pg_game.width, 100, P2D);
    pg_mini = createGraphics(miniMapWidth, miniMapHeight, P2D);
    pg_score = createGraphics(80, dataBarHeight-10, P2D);
-   pg_chart = createGraphics(width - 5 - miniMapWidth - 15 - 80 - 15 -5, dataBarHeight-27, P2D);
-   scrollBarWidth = width - 5 - miniMapWidth - 15 - 80 - 15 - 5;
+   pg_chart = createGraphics(pg_game.width - 5 - miniMapWidth - 15 - 80 - 15 -5, dataBarHeight-27, P2D);
+   scrollBarWidth = pg_game.width - 5 - miniMapWidth - 15 - 80 - 15 - 5;
    scrollBarHeight = 12;
    pg_scrollbar = createGraphics(scrollBarWidth, scrollBarHeight);
    scrollbar = new HScrollbar(5 + miniMapWidth + 15 + 80 + 15, height - 17, 
@@ -101,11 +110,14 @@ void draw()
     {
       cam.read();
     }
+
     img = cam.get();
+    drawVideo();
   }
   else
   {
-    // prendre l'image de la vidéo
+    img = movie;
+    drawVideo();
   }
   
   drawGame();   
@@ -120,6 +132,13 @@ void draw()
   drawChart();
   scrollbar.update();
   scrollbar.display(pg_scrollbar);
+  
+  // afficher l'image
+  //if (img.width != 0)
+    //img.resize(RES_VIDEO_GAME_X, img.height*RES_VIDEO_GAME_X/img.width);
+  //image(img, RES_VIDEO_GAME_X, 0);
+  // analyser l'image
+  process_image();
 }
 
 void keyPressed()
@@ -193,7 +212,7 @@ void mousePressed()
   switch(mode)
   {
     case EDIT:
-      float x =map(mouseX-width/2, -155, 155, -plateWidth/2, plateWidth/2);
+      float x =map(mouseX-pg_game.width/2, -155, 155, -plateWidth/2, plateWidth/2);
       float z =map(mouseY-pg_game.height/2, -155, 155, -plateLength/2, plateLength/2);
       
       //PVector mapped = mapMouse(mouseX-width/2, mouseY-height/2);
