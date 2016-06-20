@@ -171,9 +171,6 @@ class HoughComparator implements java.util.Comparator<Integer>
 
 void displayAccumulator(int rDim, int phiDim, int[] accumulator)
 {
-  noStroke();
-  fill(255);
-  rect(RES_IMG_X, 0, RES_ACC_X, RES_ACC_Y);
   PImage houghImg = createImage(rDim + 2, phiDim + 2, ALPHA);
   houghImg.loadPixels();
   for (int i = 0; i < accumulator.length; i++) 
@@ -183,7 +180,13 @@ void displayAccumulator(int rDim, int phiDim, int[] accumulator)
   houghImg.updatePixels();
   // You may want to resize the accumulator to make it easier to see:
   houghImg.resize(RES_ACC_X, RES_ACC_Y);
-  image(houghImg, RES_IMG_X, 0);
+  if (VIDEO_GAME_ACTIVE == false)
+  {
+    noStroke();
+    fill(255);
+    rect(RES_IMG_X, 0, RES_ACC_X, RES_ACC_Y);
+    image(houghImg, RES_IMG_X, 0);
+  }
 }
 
 //**********************************************************//
