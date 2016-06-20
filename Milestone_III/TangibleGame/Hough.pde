@@ -178,15 +178,6 @@ void displayAccumulator(int rDim, int phiDim, int[] accumulator)
       houghImg.pixels[i] = color(min(255, accumulator[i]));
   }
   houghImg.updatePixels();
-  // You may want to resize the accumulator to make it easier to see:
-  houghImg.resize(RES_ACC_X, RES_ACC_Y);
-  if (VIDEO_GAME_ACTIVE == false)
-  {
-    noStroke();
-    fill(255);
-    rect(RES_IMG_X, 0, RES_ACC_X, RES_ACC_Y);
-    image(houghImg, RES_IMG_X, 0);
-  }
 }
 
 //**********************************************************//
