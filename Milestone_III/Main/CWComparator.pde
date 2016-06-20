@@ -18,6 +18,7 @@ static class CWComparator implements Comparator<PVector>
 
 public static List<PVector> sortCorners(List<PVector> quad)
 {
+ 
   // Sort corners so that they are ordered clockwise
   PVector a = quad.get(0);
   PVector b = quad.get(2);
@@ -28,10 +29,11 @@ public static List<PVector> sortCorners(List<PVector> quad)
   // Re-order the corners so that the first one is the closest to the
   // origin (0,0) of the image.
   int min = 0;
-  double minDistance = Math.sqrt(Math.pow(quad.get(0).x, 2) + Math.pow(quad.get(0).y, 2));
+  double minDistance = Double.MAX_VALUE;
+  PVector origine = new PVector(0, 0);
   for (int i = 0 ; i < quad.size() ; ++i)
   {
-    double currentDistance = Math.sqrt(Math.pow(quad.get(i).y, 2) +  Math.pow(quad.get(i).y, 2));
+    double currentDistance = origine.dist(quad.get(i));
     if (currentDistance < minDistance)
     {
       minDistance = currentDistance;
@@ -39,7 +41,7 @@ public static List<PVector> sortCorners(List<PVector> quad)
     }
   }
 
-  Collections.rotate(quad, min);
+  Collections.rotate(quad, -min);
   
   return quad;
 }
