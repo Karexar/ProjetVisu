@@ -26,7 +26,8 @@ class TwoDThreeD
                 {-boardSizeMid, boardSizeMid, 0, 1},
               };
   
-  public TwoDThreeD(int width, int height) {
+  public TwoDThreeD(int width, int height) 
+  {
     
     // set the offset to the center of the webcam image
     K[0][2] = 0.5f * width;
@@ -67,7 +68,8 @@ class TwoDThreeD
   }
     
     
-  double[][] solveExtrinsicMatrix(List<PVector> points2D) {
+  double[][] solveExtrinsicMatrix(List<PVector> points2D) 
+  {
   
     // p ~= K · [R|t] · P
     // with P the (3D) corners of the physical board, p the (2D) 
@@ -83,11 +85,8 @@ class TwoDThreeD
     
     for(int i=0;i<4;i++)
     {
-        // TODO:
         // store in projectedCorners the result of (K^(-1) · p), for each 
-        // corner p found in the webcam image.
-        // You can use Mat.multiply to multiply a matrix with a vector.
-        
+        // corner p found in the webcam image.        
         PVector newPoint = points2D.get(i);
         float[] newPointArray = new float[3];
         newPointArray[0] = newPoint.x;
@@ -155,7 +154,8 @@ class TwoDThreeD
 
   }
     
-  PVector rotationFromMatrix(float[][]  mat) {
+  PVector rotationFromMatrix(float[][]  mat) 
+  {
 
     // Assuming rotation order is around x,y,z
     PVector rot = new PVector();

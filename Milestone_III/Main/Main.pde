@@ -102,6 +102,14 @@ void draw()
   ArrayList<PVector[]> bestQuad = getBestQuad(lines, img_sobel);
   if (bestQuad != null)
   {
+    // On affiche les angles
+    
+    TwoDThreeD tmp = new TwoDThreeD(RES_IMG_X, RES_IMG_Y);
+    PVector angles = tmp.get3DRotations(Arrays.asList(bestQuad.get(0)));
+    println(angles.x);
+    println(angles.y);
+    println(angles.z);
+    
     PVector[] q_inter = bestQuad.get(0);
     PVector[] q_lines = bestQuad.get(1);
     
@@ -117,5 +125,5 @@ void draw()
   }
   
   // On affiche à droite le résultat du sobel
-  image(img_sobel, RES_IMG_X + RES_ACC_X, 0);
+  //image(img_sobel, RES_IMG_X + RES_ACC_X, 0);
 }
