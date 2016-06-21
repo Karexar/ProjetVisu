@@ -52,7 +52,7 @@ long current;
 
 void settings() 
 {
-   size(RES_GAME_X + RES_VIDEO_X, RES_GAME_Y, P3D); 
+   size(RES_GAME_X + RES_VIDEO_X, Math.max(RES_GAME_Y, 2*RES_VIDEO_Y), P3D); 
 }
 
 void setup() 
@@ -118,6 +118,10 @@ void draw()
   }
   else
   {
+    if (movie.available() == true) 
+    {
+      movie.read();
+    }
     img = movie.get();
   }
   imgUnmodified = img.copy();
