@@ -7,6 +7,7 @@ Capture cam;
 Movie movie;
 
 float rotationX = 0.0;
+float rotationY = 0.0;
 float rotationZ = 0.0;
 
 float plateWidth = 250;
@@ -49,6 +50,7 @@ HScrollbar scrollbar;
 long start;
 long current;
 
+ArrayList<PVector> allLines;
 
 void settings() 
 {

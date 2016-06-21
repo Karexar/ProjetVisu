@@ -16,7 +16,12 @@ ArrayList<PVector[]> process_image()
   
   //--- On applique hough et on récupère les lignes
   ArrayList<PVector> lines = hough(img_sobel, BEST_LINE_NB);
-  println(lines.size());
+  allLines = new ArrayList<PVector>();
+  for(int i = 0 ; i < lines.size() ; ++i)
+  {
+     allLines.add(lines.get(i));
+  }
+  //println(lines.size());
    
   //--- On récupère le meilleur quad
   ArrayList<PVector[]> bestQuad = getBestQuad(lines, img_sobel);
@@ -32,8 +37,9 @@ ArrayList<PVector[]> process_image()
     println(Math.toDegrees(angles.y));
     println(Math.toDegrees(angles.z));*/
     
-    rotationX = angles.x;
-    rotationZ = -angles.y;
+    rotationX = -angles.x*2/3 - PI/8;
+    //rotationY = angles.z*2/3;
+    rotationZ = -angles.y*2/3 -PI/16;
     
     return bestQuad;
   }

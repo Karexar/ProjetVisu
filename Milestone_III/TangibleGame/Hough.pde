@@ -219,7 +219,7 @@ PVector intersection(PVector l1, PVector l2)
 //  Display lines
 //**********************************************************//
 
-void display_lines(PImage edgeImg, PVector[] lines)
+void display_lines(PImage edgeImg, PVector[] lines, PGraphics obj)
 {
   for (PVector l : lines)
   {
@@ -252,10 +252,10 @@ void display_lines(PImage edgeImg, PVector[] lines)
       
     if (res.size() == 2)
     {
-      pg_video.stroke(204,102,0);
-      pg_video.line(res.get(0).x, res.get(0).y, res.get(1).x, res.get(1).y);
+      obj.stroke(204,102,0);
+      obj.line(res.get(0).x, res.get(0).y, res.get(1).x, res.get(1).y);
     }
-    else
+    else if (SHOW_INTERSECTION_ERROR)
     {
        println("Erreur, l'intersection des lignes avec les bords de l'image" +
          " donne " + res.size() + " résultat(s) au lieu de 2"); 

@@ -17,11 +17,11 @@ class Mover {
       }
       
       void update() {
-        gravity.x = sin(rotationZ) * gravityConstant / FRAMERATE;
-        gravity.z = -sin(rotationX) * gravityConstant / FRAMERATE;
+        gravity.x = sin(rotationZ) * gravityConstant*3 / FRAMERATE;
+        gravity.z = -sin(rotationX) * gravityConstant*3 / FRAMERATE;
         
         float normalForce = 1;
-        float mu = 0.05; // par défaut 0.01
+        float mu = 0.01; // par défaut 0.01
         float frictionMagnitude = normalForce * mu;
         PVector friction = velocity.copy();
         friction.mult(-1);

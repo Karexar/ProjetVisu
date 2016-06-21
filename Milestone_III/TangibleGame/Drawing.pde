@@ -18,6 +18,7 @@ void drawGame()
   {
     case PLAY:
       pg_game.rotateX(rotationX);
+      pg_game.rotateY(rotationY);
       pg_game.rotateZ(rotationZ);
       ball.update();
       break;
@@ -147,6 +148,12 @@ void drawFilteredImage()
   pg_filtered.beginDraw();
   pg_filtered.background(240);
   pg_filtered.image(img, 0, 0);
+  PVector[] linesAsArray = new PVector[allLines.size()]; 
+  for (int i = 0 ; i < allLines.size() ; ++i)
+  {
+    linesAsArray[i] = allLines.get(i);
+  }
+  display_lines(img, linesAsArray , pg_filtered);
   pg_filtered.endDraw();
   image(pg_filtered, RES_GAME_X, RES_VIDEO_Y);
 }
@@ -161,7 +168,7 @@ void drawLinesAndInter(ArrayList<PVector[]> bestQuad)
     //--- On affiche les lignes
     pg_video.beginDraw();
     pg_video.fill(255, 128, 0);
-    display_lines(img, q_lines);
+    display_lines(img, q_lines, pg_video);
     
     //--- On affiche les intersections
     pg_video.ellipse(q_inter[0].x, q_inter[0].y, 10, 10);
