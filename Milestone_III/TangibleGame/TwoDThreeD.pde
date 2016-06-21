@@ -16,6 +16,7 @@ class TwoDThreeD
   // Real physical coordinates of the Lego board in mm
    //float boardSize = 255.f;  // small board
    float boardSize = 380.f;  // duplo board
+   
    float boardSizeMid = (float)Math.ceil(boardSize/2);
   // the 3D coordinates of the physical board corners, clockwise
   

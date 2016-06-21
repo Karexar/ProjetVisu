@@ -142,13 +142,51 @@ void drawChart()
   image(pg_chart, 5 + miniMapWidth + 15 + 80 + 15, height-dataBarHeight+5);
 }
 
-void drawVideo()
+void drawFilteredImage()
 {
-  updatePixels();
-  if (img.width != 0)
-    img.resize(RES_VIDEO_GAME_X, img.height*RES_VIDEO_GAME_X/img.width);
-  image(img, RES_VIDEO_GAME_X, 0);
-  loadPixels();
+  pg_filtered.beginDraw();
+  pg_filtered.background(240);
+  pg_filtered.image(img, 0, 0);
+  pg_filtered.endDraw();
+  image(pg_filtered, RES_GAME_X, RES_VIDEO_Y);
+}
+
+void drawLinesAndInter(ArrayList<PVector[]> bestQuad)
+{
+  if (bestQuad != null && bestQuad.size() >= 2)
+  {
+    PVector[] q_inter = bestQuad.get(0);
+    PVector[] q_lines = bestQuad.get(1);
+    
+    //--- On affiche les lignes
+    pg_video.beginDraw();
+    pg_video.fill(255, 128, 0);
+    display_lines(img, q_lines);
+    
+    //--- On affiche les intersections
+    pg_video.ellipse(q_inter[0].x, q_inter[0].y, 10, 10);
+    pg_video.ellipse(q_inter[1].x, q_inter[1].y, 10, 10);
+    pg_video.ellipse(q_inter[2].x, q_inter[2].y, 10, 10);
+    pg_video.ellipse(q_inter[3].x, q_inter[3].y, 10, 10);
+      
+    pg_video.endDraw();
+    image(pg_video, RES_GAME_X, 0);
+  }
+}
+
+void drawVideo(ArrayList<PVector[]> bestQuad)
+{
+  pg_video.beginDraw();
+  //pg_video.loadPixels();
+  //if (imgUnmodified.width != 0)
+  //  imgUnmodified.resize(RES_VIDEO_GAME_X, imgUnmodified.height*RES_VIDEO_GAME_X/imgUnmodified.width);
+  pg_video.image(imgUnmodified, 0, 0);
+  drawLinesAndInter(bestQuad);
+  pg_video.endDraw();
+  //pg_video.updatePixels();
+  //loadPixels();
+  image(pg_video, RES_GAME_X, 0);
+  //updatePixels();
 }
 
 /*

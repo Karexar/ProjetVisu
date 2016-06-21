@@ -1,6 +1,8 @@
 import processing.video.*;
 
 PImage img;
+PImage imgUnmodified;
+
 Capture cam;
 Movie movie;
 
@@ -33,6 +35,7 @@ PGraphics pg_dataBar;
   int dataBarHeight = 100;
 PGraphics pg_game;
 PGraphics pg_video;
+PGraphics pg_filtered;
 PGraphics pg_mini;
   int miniMapHeight = dataBarHeight-10;
   int miniMapWidth = Math.round((plateWidth/plateLength) * miniMapHeight);
@@ -49,8 +52,7 @@ long current;
 
 void settings() 
 {
-   //size(600, 600, P3D);
-   size(2*RES_VIDEO_GAME_X, RES_VIDEO_GAME_Y, P3D); 
+   size(RES_GAME_X + RES_VIDEO_X, RES_GAME_Y, P3D); 
 }
 
 void setup() 
@@ -76,7 +78,7 @@ void setup()
   }
   else
   {
-    movie = new Movie(this, "testvideo.mp4"); //Put the video in the same directory cam.loop();
+    movie = new Movie(this, "testvideo.mp4");
     movie.loop();
   }
   
@@ -88,8 +90,9 @@ void setup()
    cylinder = new Cylinder();
    score = 0;
    lastScore = 0;
-   pg_game = createGraphics(RES_VIDEO_GAME_X, RES_VIDEO_GAME_Y-dataBarHeight, P3D);
-   pg_video = createGraphics(RES_VIDEO_GAME_X, RES_VIDEO_GAME_Y-dataBarHeight, P2D);
+   pg_game = createGraphics(RES_GAME_X, RES_GAME_Y-dataBarHeight, P3D);
+   pg_video = createGraphics(RES_VIDEO_X, RES_VIDEO_Y, P2D);
+   pg_filtered = createGraphics(RES_VIDEO_X, RES_VIDEO_Y, P2D);
    pg_dataBar = createGraphics(pg_game.width, 100, P2D);
    pg_mini = createGraphics(miniMapWidth, miniMapHeight, P2D);
    pg_score = createGraphics(80, dataBarHeight-10, P2D);
@@ -112,13 +115,12 @@ void draw()
     }
 
     img = cam.get();
-    drawVideo();
   }
   else
   {
-    img = movie;
-    drawVideo();
+    img = movie.get();
   }
+  imgUnmodified = img.copy();
   
   drawGame();   
   drawDataVisuBar();
@@ -133,19 +135,20 @@ void draw()
   scrollbar.update();
   scrollbar.display(pg_scrollbar);
   
-  // afficher l'image
-  //if (img.width != 0)
-    //img.resize(RES_VIDEO_GAME_X, img.height*RES_VIDEO_GAME_X/img.width);
-  //image(img, RES_VIDEO_GAME_X, 0);
   // analyser l'image
-  process_image();
+  ArrayList<PVector[]> bestQuad = process_image();
+  // afficher l'image
+  drawVideo(bestQuad);
+  drawFilteredImage();
 }
 
 void keyPressed()
 {
   if (key == CODED)
     if (keyCode == SHIFT)
+    {
       mode = Mode.EDIT;
+    }
 }
 
 void keyReleased()

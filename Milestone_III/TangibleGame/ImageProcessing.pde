@@ -1,4 +1,4 @@
-void process_image()
+ArrayList<PVector[]> process_image()
 {
   //--- On filtre le hue, la saturation, et la brightness
   filter_image(img, MIN_HUE, MAX_HUE, Filter.HUE);  // le vert est officiellement entre 81 et 140
@@ -24,36 +24,21 @@ void process_image()
   {
     // On trie le quad
     List<PVector> sortedCorners = sortCorners(Arrays.asList(bestQuad.get(0)));
-    // On affiche les angles
-    TwoDThreeD tmp = new TwoDThreeD(RES_VIDEO_GAME_X, RES_VIDEO_GAME_Y);
+    // On calcule les angles
+    TwoDThreeD tmp = new TwoDThreeD(RES_VIDEO_X, RES_VIDEO_Y);
     PVector angles = tmp.get3DRotations(sortedCorners);
-    println("affichage des angles : ");
+    /*println("affichage des angles : ");
     println(Math.toDegrees(angles.x));
     println(Math.toDegrees(angles.y));
-    println(Math.toDegrees(angles.z));
+    println(Math.toDegrees(angles.z));*/
     
     rotationX = angles.x;
-    rotationZ = angles.y;
+    rotationZ = -angles.y;
     
-    PVector[] q_inter = bestQuad.get(0);
-    PVector[] q_lines = bestQuad.get(1);
-    
-    //--- On affiche les lignes
-    loadPixels();
-    pg_video.beginDraw();
-    pg_video.fill(255, 128, 0);
-    display_lines(img, q_lines);
-    
-    //--- On affiche les intersections
-    pg_video.ellipse(q_inter[0].x, q_inter[0].y, 10, 10);
-    pg_video.ellipse(q_inter[1].x, q_inter[1].y, 10, 10);
-    pg_video.ellipse(q_inter[2].x, q_inter[2].y, 10, 10);
-    pg_video.ellipse(q_inter[3].x, q_inter[3].y, 10, 10);
-    
-    println("TESTESE");
-    
-    pg_video.endDraw();
-    updatePixels();
-    image(pg_video, RES_VIDEO_GAME_X, 0);
+    return bestQuad;
+  }
+  else
+  {
+    return null; 
   }
 }

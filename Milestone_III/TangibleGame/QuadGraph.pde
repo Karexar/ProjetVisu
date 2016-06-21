@@ -249,7 +249,7 @@ class QuadGraph {
 
     if (!valid) 
       if (SHOW_QUAD_ERROR) 
-        System.out.println("Area out of range");
+        System.out.println("Area out of range : " + area);
 
     return valid;
   }
@@ -277,7 +277,7 @@ class QuadGraph {
   boolean nonFlatQuad(PVector c1, PVector c2, PVector c3, PVector c4) {
 
     // cos(70deg) ~= 0.3
-    float min_cos = 0.5f;
+    float min_cos = MIN_COS;
 
     PVector v21= PVector.sub(c1, c2);
     PVector v32= PVector.sub(c2, c3);

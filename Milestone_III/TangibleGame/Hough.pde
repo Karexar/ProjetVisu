@@ -236,18 +236,18 @@ void display_lines(PImage edgeImg, PVector[] lines)
     int y1 = 0;
     int x2 = edgeImg.width;
     int y2 = (int) (-cos(phi) / sin(phi) * x2 + r / sin(phi));
-    int y3 = edgeImg.width;
+    int y3 = edgeImg.height;
     int x3 = (int) (-(y3 - r / sin(phi)) * (sin(phi) / cos(phi)));
         
     ArrayList<PVector> res = new ArrayList<PVector>();
     
-    if (y0 >= 0 && y0 < edgeImg.height)
+    if (y0 >= 0 && y0 <= edgeImg.height && x0 >= 0 && x0 <= edgeImg.width)
       res.add(new PVector(x0, y0));
-    if (x1 >= 0 && x1 < edgeImg.width)
+    if (x1 >= 0 && x1 <= edgeImg.width && y1 >= 0 && y1 <= edgeImg.height)
       res.add(new PVector(x1, y1));
-    if (y2 >= 0 && y2 < edgeImg.height)
+    if (y2 >= 0 && y2 <= edgeImg.height && x2 >= 0 && x2 <= edgeImg.width)
       res.add(new PVector(x2, y2));
-    if (x3 >= 0 && x3 < edgeImg.width)
+    if (x3 >= 0 && x3 <= edgeImg.width && y3 >= 0 && y3 <= edgeImg.height)
       res.add(new PVector(x3, y3));
       
     if (res.size() == 2)
@@ -258,7 +258,12 @@ void display_lines(PImage edgeImg, PVector[] lines)
     else
     {
        println("Erreur, l'intersection des lignes avec les bords de l'image" +
-         " ne donne pas deux résultats comme attendu"); 
+         " donne " + res.size() + " résultat(s) au lieu de 2"); 
+       println("Les 4 intersections sont : "); 
+       println("  (" + x0 + ", " + y0 + ")");
+       println("  (" + x1 + ", " + y1 + ")");
+       println("  (" + x2 + ", " + y2 + ")");
+       println("  (" + x3 + ", " + y3 + ")");
     }
   }
 }
